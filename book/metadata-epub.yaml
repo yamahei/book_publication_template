@@ -1,0 +1,11 @@
+---
+title:
+- type: main
+  text: 書籍出版テンプレート利用の手引き
+creator:
+- role: author
+  text: 出版基盤開発チーム
+language: ja
+page-progression-direction: rtl
+cover-image: book/cover/cover.png
+---

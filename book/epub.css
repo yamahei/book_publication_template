@@ -1,0 +1,81 @@
+@charset "UTF-8";
+
+/* ==============================================================================
+ * epub.css - KDP(Kindle)向け縦書きEPUBスタイルシート
+ * ============================================================================== */
+
+/* 1. 基本設定（縦書き・明朝体ベース・本文フォントサイズ2倍） */
+html {
+  -webkit-writing-mode: vertical-rl;
+  -epub-writing-mode: vertical-rl;
+  writing-mode: vertical-rl;
+  font-family: serif, "Hiragino Mincho ProN", "Yu Mincho", "游明朝", "Noto Serif CJK JP", serif;
+  font-size: 200%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. 本文・段落設定（段落間に1文字分の空き） */
+p {
+  text-indent: 1em;
+  line-height: 1.8;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-right: 0;
+  margin-left: 1em;
+  padding: 0;
+  text-align: justify;
+}
+
+/* 3. 目次（TOC）設定 */
+/* 1階層目（章題）: リスト全体の余白をリセット */
+nav#toc > ol,
+#toc > ol {
+  margin: 0;
+  padding: 0;
+  list-style-type: decimal;
+}
+
+nav#toc > ol > li,
+#toc > ol > li {
+  margin: 0.5em 0;
+  padding: 0;
+}
+
+/* 2階層目（項題）: デフォルト左右マージンをリセットし、中点（・）を付与 */
+nav#toc ol ol,
+#toc ol ol {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+nav#toc ol ol > li,
+#toc ol ol > li {
+  margin: 0.2em 0;
+  padding: 0;
+}
+
+nav#toc ol ol > li::before,
+#toc ol ol > li::before {
+  content: "・";
+}
+
+/* 4. ルビ設定 */
+ruby {
+  ruby-align: center;
+}
+
+rt {
+  font-size: 0.5em;
+}
+
+/* 5. 縦中横 */
+.tcy {
+  -webkit-text-combine: horizontal;
+  -epub-text-combine: horizontal;
+  text-combine-upright: all;
+}

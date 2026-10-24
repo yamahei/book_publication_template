@@ -1,0 +1,5 @@
+# md2epub.sh 設定ファイル（対話入力により自動生成）
+markdown_file="book/contents.md"
+metadata_yaml="book/metadata-epub.yaml"
+cover_image="book/cover/cover.png"
+css_file="book/epub.css"

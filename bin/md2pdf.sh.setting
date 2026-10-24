@@ -1,0 +1,3 @@
+# md2pdf.sh 設定ファイル（対話入力により自動生成）
+markdown_file="book/contents.md"
+metadata_yaml="book/metadata-pdf.yaml"

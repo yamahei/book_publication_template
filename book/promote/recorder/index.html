@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ショート動画レコーダー | 書籍出版テンプレート</title>
+  <meta name="description" content="書籍の宣伝用ショート動画を、ブラウザ上で再生・録画・ダウンロードするツール">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@500;700&display=block">
+  <link rel="stylesheet" href="recorder.css">
+</head>
+<body>
+  <main class="layout">
+    <!-- 録画対象の枠（この要素の範囲だけを切り取って録画する） -->
+    <div id="stage-frame" class="stage-frame">
+      <div id="stage" class="stage">
+        <video id="bg-video" class="stage-bg" muted loop playsinline preload="auto"></video>
+        <div class="stage-shade"></div>
+        <header class="stage-title">
+          <p class="stage-title-main"></p>
+          <p class="stage-title-sub"></p>
+        </header>
+        <div class="stage-text-area">
+          <div id="stage-text" class="stage-text"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 操作パネル（録画範囲の外） -->
+    <aside class="panel">
+      <h1 class="panel-title">ショート動画レコーダー</h1>
+      <ol id="movie-list" class="movie-list"></ol>
+      <p id="status" class="status" role="status"></p>
+    </aside>
+  </main>
+
+  <script src="movies.js"></script>
+  <script src="recorder.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+---
+title: 書籍出版テンプレート利用の手引き
+author: 出版基盤開発チーム
+documentclass: jlreq
+indent: true
+classoption:
+- tate
+- paper=a5
+- fontsize=14.3pt
+- openany
+- titlepage
+- twoside
+toc-depth: 2
+geometry:
+- top=19mm
+- bottom=19mm
+- left=15mm
+- right=15mm
+header-includes:
+- \usepackage{luatexja-ruby}
+- |
+  \makeatletter
+  \newcommand*{\cleartoleftpage}{%
+    \clearpage
+    \ifodd\c@page
+      \hbox{}%
+      \thispagestyle{empty}%
+      \clearpage
+    \fi
+  }
+  \makeatother
+  \ModifyPageStyle{plain}{nombre_position=bottom-center}
+  \ModifyPageStyle{headings}{nombre_position=bottom-center}
+  \pagestyle{plain}
+---
