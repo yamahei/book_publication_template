@@ -81,7 +81,7 @@ Amazonの書籍ページで最初に読者の目に留まる説明文です。�
 > シンプルで分かりやすいUIなので、入稿作業は難しくありません。
 > - [Kindle ダイレクト・パブリッシング](https://kdp.amazon.co.jp/ja_JP/)
 
-> [!ATTENTION]
+> [!IMPORTANT]
 > 出版時に求められる表紙ファイルは、少々面倒なため、別項としてまとめています。
 > - [Step 3-2: 表紙・装丁制作](book/cover/README.md)
 
