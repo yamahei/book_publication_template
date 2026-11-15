@@ -71,16 +71,16 @@ Amazon KDPの印刷機が物理裁断を行うため、以下の幾何学的寸�
 KDPペーパーバックでは画像ファイル（PNG/JPEG）での入稿が拒否され、**ベクター化された正確な寸法のPDF**が要求されます。
 
 ### 3.1 ラスタ画像から完全同一寸法PDFへの変換メカニズム
-画像編集ソフトから書き出された高解像度PNG（`cover_to_paperback.png`）から、ピクセルの寸法を1ポイントも狂わせずにPDF化するため、PythonのPillowライブラリを用いてDPIメタデータを強制固定します。
+画像編集ソフトから書き出されたPNG（`cover_to_paperback.png`）から、物理寸法（mm/インチ）を狂わせずにPDF化するため、PythonのPillowライブラリを用いてPNGの埋め込みDPIメタデータ（未設定時は `300.0 DPI`）を読み取ってPDFヘッダーへ反映します。
 
 ```sh
-python -c "from PIL import Image; Image.open('book/cover/cover_to_paperback.png').convert('RGB').save('book/cover/cover_to_paperback.pdf', format='PDF', resolution=300.0)"
+python -c "from PIL import Image; im = Image.open('book/cover/cover_to_paperback.png'); dpi = im.info.get('dpi', (300.0,))[0]; im.convert('RGB').save('book/cover/cover_to_paperback.pdf', format='PDF', resolution=dpi)"
 ```
 
-### 3.2 なぜ解像度 300.0 DPI 固定が必要か
+### 3.2 なぜ埋め込みDPIの参照と 300 DPI 以上の書き出しが必要か
 - PDF内部の座標系はポイント単位（1 pt = 1/72 インチ）で記述されます。
-- 解像度が `300.0 DPI` として正しく埋め込まれていない場合、PDFリーダーやKDPの自動検版システムがデフォルトの `72 DPI` で解釈し、寸法が約4.16倍に拡大されて入稿エラー（サイズ不一致）が発生します。
-- 上記コマンドにより、ラスタピクセル数 $N$ に対して $\text{pt} = N \times \frac{72}{300}$ の正確なMediaBoxサイズがPDFヘッダーに書き込まれます。
+- PNGに記録されたDPI（`300 DPI` やKDPテンプレート標準の `600 DPI` など）を参照せずに固定値で変換すると、書き出し時のDPI設定によってPDFの物理サイズが拡大・縮小され、KDPの自動検版システムで入稿エラー（サイズ不一致）が発生します。
+- 上記コマンドにより、ラスタピクセル数 $N$ と埋め込み解像度 $\text{DPI}$ に対して $\text{pt} = N \times \frac{72}{\text{DPI}}$ の正確なMediaBoxサイズがPDFヘッダーに書き込まれ、元画像の物理寸法が完全に保持されます（なお、KDPの印刷品質基準を満たすため、PNG書き出し時の解像度は `300 DPI` 以上とします）。
 
 
 ## 4. 電子書籍（Kindle）用表紙仕様

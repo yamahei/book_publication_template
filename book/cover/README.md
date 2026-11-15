@@ -44,19 +44,20 @@
 3. ダウンロードしたZIPを展開し、中に入っているPNG画像を `book/cover/` 配下に置きます。
 
 #### Step 2: テンプレートに沿って画像をレイアウト
-1. 画像編集ソフト（Canva, Photoshop, GIMP等）で、ダウンロードしたテンプレートPNGを下敷きとして開きます。
+1. 画像編集ソフト（Inkscape, GIMP, Photoshop, Canva等）で、ダウンロードしたテンプレートPNGを下敷きとして開きます。
 2. ガイド線に合わせて表紙・背表紙・裏表紙を配置します：
    - **右側**: 表表紙（タイトル、著者名）
    - **中央**: 背表紙（ページ数が少ない薄い本ならタイトルなしでもOK）
    - **左側**: 裏表紙（※右下のバーコード印字エリアに文字を置かないよう注意）
-3. 編集が完了したら、テンプレートと完全に同じ解像度・寸法の1枚画像 **`book/cover/cover_to_paperback.png`** として書き出します。
+3. 編集が完了したら、テンプレートと同じ物理寸法の1枚画像 **`book/cover/cover_to_paperback.png`** として書き出します。
+   - **注意（解像度設定）**: KDPの印刷要件を満たすため、書き出し時の解像度（DPI）は **`300 DPI` 以上**（`300 DPI` またはテンプレートと同じ `600 DPI`）に設定してください。
 
 #### Step 3: ワンライナーで入稿用PDFを生成
-KDPペーパーバックでは画像入稿が不可のため、以下のPythonコマンドを実行して、寸法が1ピクセルも狂わない入稿用PDFを生成します：
+KDPペーパーバックでは画像入稿が不可のため、以下のPythonコマンドを実行して、元画像の埋め込みDPIから物理寸法（mm/インチ）をそのまま維持した入稿用PDFを生成します：
 
 ```sh
 # リポジトリルートで実行
-python -c "from PIL import Image; Image.open('book/cover/cover_to_paperback.png').convert('RGB').save('book/cover/cover_to_paperback.pdf', format='PDF', resolution=300.0)"
+python -c "from PIL import Image; im = Image.open('book/cover/cover_to_paperback.png'); dpi = im.info.get('dpi', (300.0,))[0]; im.convert('RGB').save('book/cover/cover_to_paperback.pdf', format='PDF', resolution=dpi)"
 ```
 
 ※実行後、`book/cover/cover_to_paperback.pdf` が生成されます。
