@@ -22,7 +22,7 @@ header-includes:
   \makeatletter
   \newcommand*{\cleartoleftpage}{%
     \clearpage
-    \ifodd\c@page
+    \ifodd\c@page\else
       \hbox{}%
       \thispagestyle{empty}%
       \clearpage
@@ -32,5 +32,6 @@ header-includes:
   \ModifyPageStyle{plain}{nombre_position=bottom-center}
   \ModifyPageStyle{headings}{nombre_position=bottom-center}
   \pagestyle{plain}
-  \AddToHook{cmd/tableofcontents/after}{\global\parskip=\baselineskip}
+  \AddToHook{cmd/maketitle/after}{\clearpage\hbox{}\thispagestyle{empty}\clearpage}
+  \AddToHook{cmd/tableofcontents/after}{\global\parskip=\baselineskip\clearpage\hbox{}\thispagestyle{empty}\clearpage}
 ---

@@ -89,9 +89,9 @@ function Header(el)
   end
 
   if el.level == 1 then
-    -- 章題：1ページを使った章扉（ページ中央配置）とし、次ページから本文を開始
+    -- 章題：左ページ（奇数ページ）起こしで1ページを使った章扉（ページ中央配置）とし、次ページから本文を開始
     local cmd = table.concat({
-      "\\clearpage",
+      "\\cleartoleftpage",
       "\\vbox to \\textheight{%",
       "\\vfill",
       "\\hbox to \\textwidth{\\hss\\LARGE\\phantomsection\\addcontentsline{toc}{section}{" .. plain_title .. "}" .. label_cmd .. latex_title .. "\\hss}%",
