@@ -89,8 +89,16 @@ function Header(el)
   end
 
   if el.level == 1 then
-    -- 章題：左ページ（偶数ページ）起こし。タイトル後の改ページはなし（項題・本文と並べる）
-    local cmd = "\\cleartoleftpage\n\\section[" .. plain_title .. "]{\\texorpdfstring{" .. latex_title .. "}{" .. plain_title .. "}}" .. label_cmd
+    -- 章題：1ページを使った章扉（ページ中央配置）とし、次ページから本文を開始
+    local cmd = table.concat({
+      "\\clearpage",
+      "\\vbox to \\textheight{%",
+      "\\vfill",
+      "\\hbox to \\textwidth{\\hss\\LARGE\\phantomsection\\addcontentsline{toc}{section}{" .. plain_title .. "}" .. label_cmd .. latex_title .. "\\hss}%",
+      "\\vfill",
+      "}",
+      "\\clearpage"
+    }, "\n")
     return pandoc.RawBlock("latex", cmd)
   elseif el.level == 2 then
     -- 項題：改ページなしで章題に続けて並べる
