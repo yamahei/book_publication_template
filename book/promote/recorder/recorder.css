@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 /* ==============================================================================
- * recorder.css - ショート動画レコーダーのスタイル
+ * recorder.css - ショート動画レコーダーのスタイル（1文1ページ・起承転結構成）
  *   録画枠（.stage）は 1080x1920 の座標で設計し、JS で表示倍率を掛ける
  * ============================================================================== */
 
@@ -11,6 +11,13 @@
   --panel-muted: #8f8a83;
   --accent: #c9a45c;
   --stage-font: "Noto Serif JP", "Yu Mincho", "游明朝", serif;
+
+  /* ステージ内のテーマ変数（movies.js の BOOK_CONFIG.theme で動的に上書き可能） */
+  --stage-base-color: #ad7e7a;
+  --stage-sub-color: #8c5f5b;
+  --stage-text-color: #ffffff;
+  --stage-accent-color: #ffe082;
+  --phase4-shade: rgba(15, 8, 8, 0.56);
 }
 
 * {
@@ -26,6 +33,10 @@ body {
   font-family: "Yu Gothic UI", "Meiryo", sans-serif;
 }
 
+.is-hidden {
+  display: none !important;
+}
+
 /* ------------------------------------------------------------------------------
  * 全体レイアウト（左: 録画枠 / 右: 操作パネル）
  * ------------------------------------------------------------------------------ */
@@ -35,11 +46,11 @@ body {
   justify-content: center;
   gap: 24px;
   height: 100%;
-  padding: 0 16px; /* 録画枠に縦の表示領域をすべて使えるよう、上下の余白は付けない */
+  padding: 0 16px;
 }
 
 /* ------------------------------------------------------------------------------
- * 録画枠
+ * 録画枠（1080 x 1920）
  * ------------------------------------------------------------------------------ */
 .stage-frame {
   position: relative;
@@ -57,9 +68,11 @@ body {
   overflow: hidden;
   transform-origin: top left;
   cursor: none;
+  background: var(--stage-base-color);
 }
 
-/* 背景動画 */
+/* 背景（Canvas / Video） */
+.stage-bg-canvas,
 .stage-bg {
   position: absolute;
   inset: 0;
@@ -68,79 +81,82 @@ body {
   object-fit: cover;
 }
 
-/* 文字を読みやすくするための陰影 */
+/* 表紙の明るい色味を損なわないよう、周辺減光はごく控えめにする */
 .stage-shade {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom,
-      rgba(0, 0, 0, 0.60) 0%,
-      rgba(0, 0, 0, 0.30) 22%,
-      rgba(0, 0, 0, 0.30) 70%,
-      rgba(0, 0, 0, 0.50) 100%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0.0) 0%,
+    rgba(0, 0, 0, 0.06) 65%,
+    rgba(0, 0, 0, 0.22) 100%
+  );
+  pointer-events: none;
 }
 
-/* タイトル（横書き・画面上部に表示し続ける） */
-.stage-title {
+/* 結（フェーズ4：誘導）で表紙を際立たせるための半透明オーバーレイ */
+.phase4-overlay {
   position: absolute;
-  top: 170px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-family: var(--stage-font);
-  color: #fff;
-  /* どんな背景でも読めるよう、白い文字に黒いドロップシャドウを付ける */
-  text-shadow: 5px 5px 4px rgba(0, 0, 0, 0.9), 0 0 14px rgba(0, 0, 0, 0.8);
+  inset: 0;
+  background: var(--phase4-shade);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
 }
 
-.stage-title p {
-  margin: 0;
+.phase4-overlay.is-active {
+  opacity: 1;
 }
 
-.stage-title-main {
-  font-size: 104px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-}
-
-.stage-title-sub {
-  margin-top: 12px !important;
-  font-size: 44px;
-  font-weight: 500;
-  letter-spacing: 0.3em;
-  color: #eadfc8;
-}
-
-/* 前景（縦書き・ルビ付き・左から右へスクロール） */
-.stage-text-area {
+/* ------------------------------------------------------------------------------
+ * 起・承・転：縦書きテキスト領域（キレのある切り替え）
+ * ------------------------------------------------------------------------------ */
+.phase-text-area {
   position: absolute;
-  top: 470px;
-  left: 0;
-  right: 0;
-  height: 1150px;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 180px 100px;
+  pointer-events: none;
+  transition: opacity 0.14s ease-out;
 }
 
 .stage-text {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: max-content;
+  max-height: 1520px;
+  max-width: 880px;
   writing-mode: vertical-rl;
   font-family: var(--stage-font);
-  font-size: 72px;
-  font-weight: 500;
-  line-height: 1.8;
-  color: #fff;
-  /* どんな背景でも読めるよう、白い文字に黒いドロップシャドウを付ける */
-  text-shadow: 4px 4px 3px rgba(0, 0, 0, 0.9), 0 0 12px rgba(0, 0, 0, 0.8);
-  will-change: transform;
+  color: var(--stage-text-color);
+  /* 明るい和布背景の上でも白文字・強調文字がくっきり浮き立つシャドウ */
+  text-shadow:
+    0 2px 6px rgba(25, 10, 10, 0.85),
+    0 6px 20px rgba(25, 10, 10, 0.65),
+    1px 1px 2px rgba(20, 5, 5, 0.95);
 }
 
-/* 段落設定は book/epub.css に合わせる */
+/* 1行ごとのキレのある出現アニメーション（0.16秒でスパッと出る） */
 .stage-text p {
-  margin: 0 0 0 1em;
-  text-indent: 1em;
-  text-align: justify;
+  margin: 0;
+  opacity: 0;
+  transform: translateY(8px) scale(1.02);
+  transition: opacity 0.16s cubic-bezier(0.2, 0.9, 0.3, 1), transform 0.16s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+.stage-text p.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* 強調箇所（<em>）の彩り */
+.stage-text em {
+  font-style: normal;
+  font-weight: 700;
+  color: var(--stage-accent-color);
+  text-shadow:
+    0 2px 8px rgba(20, 5, 5, 0.92),
+    0 6px 22px rgba(20, 5, 5, 0.75),
+    1px 1px 3px rgba(15, 5, 5, 0.98);
 }
 
 .stage-text ruby {
@@ -148,7 +164,136 @@ body {
 }
 
 .stage-text rt {
-  font-size: 0.5em;
+  font-size: 0.45em;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+/* --- 【起】（問い・断言）：画面中央に特大で力強く1行表示 --- */
+.phase-text-area[data-phase="起"] .stage-text {
+  font-size: 86px;
+  font-weight: 700;
+  line-height: 1.9;
+  letter-spacing: 0.1em;
+}
+
+.phase-text-area[data-phase="起"] .stage-text.is-compact {
+  font-size: 74px;
+}
+
+.phase-text-area[data-phase="起"] .stage-text p + p {
+  margin-right: 0.7em;
+}
+
+/* --- 【承】（共感・思考）：1〜2行でテンポよく読ませる --- */
+.phase-text-area[data-phase="承"] .stage-text {
+  font-size: 68px;
+  font-weight: 700;
+  line-height: 2.05;
+  letter-spacing: 0.07em;
+}
+
+.phase-text-area[data-phase="承"] .stage-text.is-compact {
+  font-size: 60px;
+}
+
+.phase-text-area[data-phase="承"] .stage-text p + p {
+  margin-right: 0.85em;
+}
+
+/* --- 【転】（展開・結論手前）：存在感のある文字と強調色 --- */
+.phase-text-area[data-phase="転"] .stage-text {
+  font-size: 70px;
+  font-weight: 700;
+  line-height: 2.05;
+  letter-spacing: 0.07em;
+}
+
+.phase-text-area[data-phase="転"] .stage-text.is-compact {
+  font-size: 62px;
+}
+
+.phase-text-area[data-phase="転"] .stage-text p + p {
+  margin-right: 0.85em;
+}
+
+/* ------------------------------------------------------------------------------
+ * 【結】（誘導）：表紙画像 ＋ 書籍タイトル・サブタイトル・CTA
+ * ------------------------------------------------------------------------------ */
+.phase-ending {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 54px;
+  padding: 140px 80px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+  pointer-events: none;
+}
+
+.phase-ending.is-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ending-cover-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ending-cover {
+  display: block;
+  max-height: 920px;
+  max-width: 620px;
+  width: auto;
+  height: auto;
+  border-radius: 6px;
+  box-shadow:
+    0 28px 68px rgba(0, 0, 0, 0.82),
+    0 8px 24px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+.ending-text-group {
+  text-align: center;
+  font-family: var(--stage-font);
+  color: var(--stage-text-color);
+  text-shadow: 0 3px 16px rgba(0, 0, 0, 0.9), 2px 2px 4px rgba(0, 0, 0, 0.95);
+}
+
+.ending-text-group p {
+  margin: 0;
+}
+
+.ending-subtitle {
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--stage-accent-color);
+}
+
+.ending-title {
+  margin-top: 18px !important;
+  font-size: 84px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.ending-cta {
+  display: inline-block;
+  margin-top: 38px !important;
+  padding: 14px 44px;
+  border-top: 1px solid rgba(255, 255, 255, 0.42);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.42);
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--stage-text-color);
 }
 
 /* ------------------------------------------------------------------------------

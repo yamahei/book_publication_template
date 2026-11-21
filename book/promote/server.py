@@ -17,6 +17,7 @@ import json
 BASE_DIR = Path(__file__).resolve().parent
 MOVIE_DIR = BASE_DIR / "movie"
 MOVIE_DIR.mkdir(exist_ok=True)
+COVER_DIR = BASE_DIR.parent / "cover"
 
 class RecorderRequestHandler(SimpleHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
@@ -32,8 +33,31 @@ class RecorderRequestHandler(SimpleHTTPRequestHandler):
                 self.send_json_response(200, {"success": True, "files": files})
             except Exception as e:
                 self.send_json_response(500, {"success": False, "error": str(e)})
+        elif parsed_url.path == "/api/cover":
+            self.handle_get_cover()
         else:
             super().do_GET()
+
+    def handle_get_cover(self):
+        candidates = [
+            (COVER_DIR / "cover.png", "image/png"),
+            (COVER_DIR / "cover_for_kdp.jpg", "image/jpeg"),
+        ]
+        for path, mime in candidates:
+            if path.exists() and path.is_file():
+                try:
+                    data = path.read_bytes()
+                    self.send_response(200)
+                    self.send_header("Content-Type", mime)
+                    self.send_header("Content-Length", str(len(data)))
+                    self.send_header("Cache-Control", "no-cache")
+                    self.end_headers()
+                    self.wfile.write(data)
+                    return
+                except Exception as e:
+                    self.send_error(500, str(e))
+                    return
+        self.send_error(404, "Cover image not found")
 
     def do_POST(self):
         parsed_url = urllib.parse.urlparse(self.path)

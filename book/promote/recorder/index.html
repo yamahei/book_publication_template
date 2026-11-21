@@ -15,14 +15,27 @@
     <!-- 録画対象の枠（この要素の範囲だけを切り取って録画する） -->
     <div id="stage-frame" class="stage-frame">
       <div id="stage" class="stage">
-        <video id="bg-video" class="stage-bg" muted loop playsinline preload="auto"></video>
-        <div class="stage-shade"></div>
-        <header class="stage-title">
-          <p class="stage-title-main"></p>
-          <p class="stage-title-sub"></p>
-        </header>
-        <div class="stage-text-area">
+        <!-- 背景（Canvasによるプリセット背景 / 動画背景） -->
+        <canvas id="bg-canvas" class="stage-bg-canvas" width="1080" height="1920"></canvas>
+        <video id="bg-video" class="stage-bg is-hidden" muted loop playsinline preload="auto"></video>
+        <div id="stage-shade" class="stage-shade"></div>
+        <div id="phase4-overlay" class="phase4-overlay"></div>
+
+        <!-- 起・承・転：縦書きテキスト表示領域 -->
+        <div id="phase-text-area" class="phase-text-area" data-phase="起">
           <div id="stage-text" class="stage-text"></div>
+        </div>
+
+        <!-- フェーズ4：誘導（表紙画像＋書籍タイトル＋CTA） -->
+        <div id="phase-ending" class="phase-ending" aria-hidden="true">
+          <div id="ending-cover-wrap" class="ending-cover-wrap">
+            <img id="ending-cover" class="ending-cover" alt="書籍表紙">
+          </div>
+          <div class="ending-text-group">
+            <p id="ending-subtitle" class="ending-subtitle"></p>
+            <p id="ending-title" class="ending-title"></p>
+            <p id="ending-cta" class="ending-cta"></p>
+          </div>
         </div>
       </div>
     </div>
@@ -36,6 +49,6 @@
   </main>
 
   <script src="movies.js"></script>
-  <script src="recorder.js?v=2"></script>
+  <script src="recorder.js?v=6"></script>
 </body>
 </html>
